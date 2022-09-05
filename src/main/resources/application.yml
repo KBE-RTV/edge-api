@@ -1,15 +1,6 @@
 spring:
   application:
     name: edge-api
-  cloud:
-    gateway:
-      default-filters:
-        - TokenRelay
-      routes:
-        - id: warehousecomponents
-          uri: http://warehouse:8081/
-          predicates:
-            - Path=/components/**
   security:
     oauth2:
       client:
@@ -17,9 +8,9 @@ spring:
           keycloak-provider:
             issuer-uri: http://keycloak:8080/realms/KBE-Realm
             # Individual properties can also be provided this way
-            #token-uri: http://keycloak:8080/realms/KBE-Realm/protocol/openid-connect/token
-            #authorization-uri: http://keycloak:8080/realms/KBE-Realm/protocol/openid-connect/auth
-            #user-info-uri: http://keycloak:8080/realms/KBE-Realm/protocol/openid-connect/userinfo
+            #token-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/token
+            #authorization-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/auth
+            #user-info-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/userinfo
         registration:
           edge-gateway-client:
             provider: keycloak-provider
