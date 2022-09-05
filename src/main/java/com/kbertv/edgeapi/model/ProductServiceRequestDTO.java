@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class CallRequestDTO {
+public class ProductServiceRequestDTO {
 
     private UUID requestID;
     private List<UUID> detailID;
