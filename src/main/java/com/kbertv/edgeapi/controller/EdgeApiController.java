@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,10 @@ import java.util.UUID;
 public class EdgeApiController {
 
     ObjectMapper objectMapper;
+
+    Sender sender;
+
+    Receiver receiver;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -35,6 +40,12 @@ public class EdgeApiController {
     @Autowired
     public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
         EdgeApiController.rabbitTemplate = rabbitTemplate;
+    }
+
+    @PostConstruct
+    public void init() {
+        sender = new Sender();
+        receiver = new Receiver();
     }
 
     @GetMapping("/")
@@ -111,10 +122,13 @@ public class EdgeApiController {
         CurrencyMessageDTO currencyMessageDTO = new CurrencyMessageDTO(UUID.randomUUID(), planetarySystems,"Euro", "Dollar");
 
         try {
-            Sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
+            sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+
+        String convertedCurrencies = receiver.receiveConvertedCurrencies();
+
 
     }
 }
