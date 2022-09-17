@@ -1,8 +1,10 @@
 package com.kbertv.edgeapi.controller;
 
-import com.kbertv.edgeapi.model.CreatedPlanetarySystem;
-import com.kbertv.edgeapi.model.PlanetarySystem;
-import com.kbertv.edgeapi.model.ProductServiceRequestDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kbertv.edgeapi.client.Receiver;
+import com.kbertv.edgeapi.client.Sender;
+import com.kbertv.edgeapi.model.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,8 @@ import java.util.UUID;
 
 @RestController
 public class EdgeApiController {
+
+    ObjectMapper objectMapper;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -65,7 +69,7 @@ public class EdgeApiController {
         ProductServiceRequestDTO detailProductRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), productUUIDList, "product");
         rabbitTemplate.convertAndSend(exchange, callRoutingKey, detailProductRequestDTO);
     }
-
+/*
     //TODO: Frontend: use "name" and "celestialBodies" key
     @PostMapping("/createproduct")
     public void sendCreateProductRequestToProductService(@RequestBody CreatedPlanetarySystem createdPlanetarySystem) {
@@ -81,6 +85,36 @@ public class EdgeApiController {
         newPlanetarySystem.setCelestialBodies(celestialBodiesUUID);
 
         rabbitTemplate.convertAndSend(exchange, callRoutingKey, newPlanetarySystem);
-    }
+    }*/
 
+    @GetMapping("/convertcurrencies")
+    public void sendProductsToConvertCurrencies() {
+        objectMapper = new ObjectMapper();
+
+        CelestialBody celestialBody1 = new CelestialBody(UUID.randomUUID(), "Sun", 1, 3.50f, "sun", 0, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        CelestialBody celestialBody2 = new CelestialBody(UUID.randomUUID(), "Earth", 1, 3.50f, "planet", 0, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+
+        ArrayList<CelestialBody> celestialBodies = new ArrayList<CelestialBody>();
+        celestialBodies.add(celestialBody1);
+        celestialBodies.add(celestialBody2);
+
+        PlanetarySystem planetarySystem1 = new PlanetarySystem(UUID.randomUUID(), "MyPlanetarySystem", "Ricky", celestialBodies, 0f);
+        PlanetarySystem planetarySystem2 = new PlanetarySystem(UUID.randomUUID(), "MyPlanetarySystem2", "Ricky", celestialBodies, 0f);
+
+        ArrayList<PlanetarySystem> planetarySystems = new ArrayList<PlanetarySystem>();
+        planetarySystems.add(planetarySystem1);
+        planetarySystems.add(planetarySystem2);
+
+        planetarySystem1.setPrice(70.0f);
+        planetarySystem2.setPrice(80.0f);
+
+        CurrencyMessageDTO currencyMessageDTO = new CurrencyMessageDTO(UUID.randomUUID(), planetarySystems,"Euro", "Dollar");
+
+        try {
+            Sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
