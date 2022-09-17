@@ -1,5 +1,5 @@
 package com.kbertv.edgeapi.config;
-
+/*
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -18,3 +18,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+ */

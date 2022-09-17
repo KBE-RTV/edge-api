@@ -21,26 +21,26 @@ public class RabbitMQConfig {
     private String callQueue;
     @Value("${rabbitmq.routing.call.key}")
     private String callRoutingKey;
-
+/*
     public static TopicExchange exchange;
 
     @Autowired
     public void setExchange(@Lazy TopicExchange exchange) {
         RabbitMQConfig.exchange = exchange;
     }
-
+*/
     @Bean
-    Queue queue() {
+    public Queue queue() {
         return new Queue(callQueue, false);
     }
 
     @Bean
-    TopicExchange exchange() {
+    public TopicExchange exchange() {
         return new TopicExchange(topicExchangeName);
     }
 
     @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
+    public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(callRoutingKey);
     }
 
@@ -50,7 +50,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(producerMessageConverter());
         return rabbitTemplate;
