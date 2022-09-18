@@ -32,8 +32,8 @@ public class EdgeApiController {
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
 
-    @Value("${rabbitmq.routing.call.key}")
-    private String callRoutingKey;
+    @Value("${productservice.routing.call.key}")
+    private String productserviceCallRoutingKey;
 
     private static RabbitTemplate rabbitTemplate;
 
@@ -48,15 +48,18 @@ public class EdgeApiController {
         receiver = new Receiver();
     }
 
+/* Just to test whether keycloak works
     @GetMapping("/")
     public String index(Principal principal) {
         return principal.getName();
     }
+*/
 
+// requests to ps
     @GetMapping("/allcomponents")
     public void sendAllComponentsRequestToProductService() {
         ProductServiceRequestDTO allComponentsRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), null, "component");
-        rabbitTemplate.convertAndSend(exchange, callRoutingKey, allComponentsRequestDTO);
+        rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, allComponentsRequestDTO);
     }
 
     //TODO: Frontend: use "detailID" key to send the UUID
@@ -64,13 +67,13 @@ public class EdgeApiController {
     public void sendDetailComponentRequestToProductService(@RequestBody String detailID) {
         List<UUID> componentUUIDList = Arrays.asList(UUID.fromString(detailID));
         ProductServiceRequestDTO detailComponentRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), componentUUIDList, "component");
-        rabbitTemplate.convertAndSend(exchange, callRoutingKey, detailComponentRequestDTO);
+        rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, detailComponentRequestDTO);
     }
 
     @GetMapping("/allproducts")
     public void sendAllProductsRequestToProductService() {
         ProductServiceRequestDTO allProductsRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), null, "product");
-        rabbitTemplate.convertAndSend(exchange, callRoutingKey, allProductsRequestDTO);
+        rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, allProductsRequestDTO);
     }
 
     //TODO: Frontend: use "detailID" key to send the UUID
@@ -78,8 +81,9 @@ public class EdgeApiController {
     public void sendDetailProductRequestToProductService(@RequestBody String detailID) {
         List<UUID> productUUIDList = Arrays.asList(UUID.fromString(detailID));
         ProductServiceRequestDTO detailProductRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), productUUIDList, "product");
-        rabbitTemplate.convertAndSend(exchange, callRoutingKey, detailProductRequestDTO);
+        rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, detailProductRequestDTO);
     }
+
 /*
     //TODO: Frontend: use "name" and "celestialBodies" key
     @PostMapping("/createproduct")
@@ -96,7 +100,8 @@ public class EdgeApiController {
         newPlanetarySystem.setCelestialBodies(celestialBodiesUUID);
 
         rabbitTemplate.convertAndSend(exchange, callRoutingKey, newPlanetarySystem);
-    }*/
+    }
+*/
 
     @GetMapping("/convertcurrencies")
     public void sendProductsToConvertCurrencies() {
@@ -128,7 +133,6 @@ public class EdgeApiController {
         }
 
         String convertedCurrencies = receiver.receiveConvertedCurrencies();
-
 
     }
 }

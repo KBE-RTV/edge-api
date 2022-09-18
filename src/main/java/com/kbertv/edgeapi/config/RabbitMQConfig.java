@@ -15,62 +15,21 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class RabbitMQConfig {
-    /*
+
     @Value("${rabbitmq.exchange.name}")
     private String topicExchangeName;
-    @Value("${rabbitmq.queue.call.name}")
-    private String callQueue;
-    @Value("${rabbitmq.routing.call.key}")
-    private String callRoutingKey;
 
+    //Response queue from productservice
+    @Value("${productservice.queue.response.name}")
+    private String productserviceResponseQueue;
+    @Value("${productservice.routing.response.key}")
+    private String productserviceResponseRoutingKey;
 
-
-    public static TopicExchange exchange;
-
-    @Autowired
-    public void setExchange(@Lazy TopicExchange exchange) {
-        RabbitMQConfig.exchange = exchange;
-    }
-
-    @Bean
-    public Queue queue() {
-        return new Queue(callQueue, false);
-    }
-
-    @Bean
-    public TopicExchange exchange() {
-        return new TopicExchange(topicExchangeName);
-    }
-
-    @Bean
-    public Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(callRoutingKey);
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter producerMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(producerMessageConverter());
-        return rabbitTemplate;
-    }
-    */
-    public static final String TOPIC_EXCHANGE_NAME = "kbe_topic_exchange";
-    public static final String CURRENCY_SERVICE_RESPONSE_QUEUE_NAME = "currency_response_queue";
-    public static final String PRICE_SERVICE_RESPONSE_QUEUE_NAME = "price_response_queue";
-    public static final String PRODUCT_SERVICE_RESPONSE_QUEUE_NAME = "product_response_queue";
-    public static final String CURRENCY_SERVICE_CALL_ROUTING_KEY = "currencyService.call";
-    public static final String CURRENCY_SERVICE_RESPONSE_ROUTING_KEY = "currencyService.response";
-    public static final String PRICE_SERVICE_CALL_ROUTING_KEY = "priceService.call";
-    public static final String PRICE_SERVICE_RESPONSE_ROUTING_KEY = "priceService.response";
-    public static final String PRODUCT_SERVICE_CALL_ROUTING_KEY = "productService.call";
-
-    public static final String PRODUCT_SERVICE_RESPONSE_ROUTING_KEY = "productService.response";
-
+    //Response queue from currencyservice
+    @Value("${currencyservice.queue.response.name}")
+    private String currencyserviceResponseQueue;
+    @Value("${currencyservice.routing.response.key}")
+    private String currencyserviceResponseRoutingKey;
 
     public static TopicExchange exchange;
 
@@ -81,37 +40,29 @@ public class RabbitMQConfig {
 
     @Bean
     TopicExchange exchange() {
-        return new TopicExchange(TOPIC_EXCHANGE_NAME);
+        return new TopicExchange(topicExchangeName);
     }
 
+    // Response queue from currency service
     @Bean
-    Queue currencyQueue() {
-        return new Queue(CURRENCY_SERVICE_RESPONSE_QUEUE_NAME, false);
+    Queue currencyResponseQueue() {
+        return new Queue(currencyserviceResponseQueue, false);
     }
 
     @Bean
     Binding currencyBinding() {
-        return BindingBuilder.bind(currencyQueue()).to(exchange).with(CURRENCY_SERVICE_RESPONSE_ROUTING_KEY);
+        return BindingBuilder.bind(currencyResponseQueue()).to(exchange).with(currencyserviceResponseRoutingKey);
     }
 
+    // Response queue from product service
     @Bean
-    Queue priceQueue() {
-        return new Queue(PRICE_SERVICE_RESPONSE_QUEUE_NAME, false);
-    }
-
-    @Bean
-    Binding priceBinding() {
-        return BindingBuilder.bind(priceQueue()).to(exchange).with(PRICE_SERVICE_RESPONSE_ROUTING_KEY);
-    }
-
-    @Bean
-    Queue productQueue() {
-        return new Queue(PRODUCT_SERVICE_RESPONSE_QUEUE_NAME, false);
+    Queue productResponseQueue() {
+        return new Queue(productserviceResponseQueue, false);
     }
 
     @Bean
     Binding productBinding() {
-        return BindingBuilder.bind(productQueue()).to(exchange).with(PRODUCT_SERVICE_RESPONSE_ROUTING_KEY);
+        return BindingBuilder.bind(productResponseQueue()).to(exchange).with(productserviceResponseRoutingKey);
     }
 
     @Bean
@@ -119,6 +70,7 @@ public class RabbitMQConfig {
         return new Jackson2JsonMessageConverter();
     }
 
+    //"final" made the app exit before -> maybe delete this?
     @Bean
     public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
