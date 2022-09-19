@@ -3,11 +3,13 @@ package com.kbertv.edgeapi.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kbertv.edgeapi.config.RabbitMQConfig;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class Sender {
@@ -29,6 +31,7 @@ public class Sender {
 
     public void sendProductsToCurrencyService(String message)
     {
+        System.out.println(currencyserviceCallRoutingKey);
         rabbitTemplate.convertAndSend(topicExchangeName, currencyserviceCallRoutingKey, message);
 
         System.out.println("SENT product to currency-service \n");

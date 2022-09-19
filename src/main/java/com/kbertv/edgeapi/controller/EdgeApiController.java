@@ -23,11 +23,14 @@ import java.util.UUID;
 @RestController
 public class EdgeApiController {
 
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+    private Sender sender;
+    private Receiver receiver;
 
-    Sender sender;
-
-    Receiver receiver;
+    public EdgeApiController(Sender sender, Receiver receiver) {
+        this.sender = sender;
+        this.receiver = receiver;
+    }
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
@@ -41,14 +44,14 @@ public class EdgeApiController {
     public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
         EdgeApiController.rabbitTemplate = rabbitTemplate;
     }
-
+/*
     @PostConstruct
     public void init() {
         sender = new Sender();
         receiver = new Receiver();
     }
 
-/* Just to test whether keycloak works
+ Just to test whether keycloak works
     @GetMapping("/")
     public String index(Principal principal) {
         return principal.getName();

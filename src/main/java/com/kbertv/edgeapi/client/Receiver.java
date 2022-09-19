@@ -33,6 +33,7 @@ public class Receiver {
     }
 */
     public String receiveConvertedCurrencies() {
+        System.out.println(currencyserviceResponseQueue);
         String message = (String) rabbitTemplate.receiveAndConvert(currencyserviceResponseQueue);
 
         System.out.println("RECEIVED products with converted currencies: " + message);
