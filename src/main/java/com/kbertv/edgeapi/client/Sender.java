@@ -15,8 +15,8 @@ public class Sender {
     @Value("${rabbitmq.exchange.name}")
     private String topicExchangeName;
 
-    @Value("${productservice.queue.call.name}")
-    private String productserviceCallQueue;
+    @Value("${productservice.routing.call.key}")
+    private String productserviceCallRoutingKey;
 
     @Value("${currencyservice.routing.call.key}")
     private String currencyserviceCallRoutingKey;
@@ -36,7 +36,7 @@ public class Sender {
 
     public void sendRequestToProductService(String request)
     {
-        rabbitTemplate.convertAndSend(topicExchangeName, productserviceCallQueue, request);
+        rabbitTemplate.convertAndSend(topicExchangeName, productserviceCallRoutingKey, request);
 
         System.out.println("SENT request to product-service \n");
     }

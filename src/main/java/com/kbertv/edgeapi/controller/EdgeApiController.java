@@ -103,8 +103,9 @@ public class EdgeApiController {
     }
 */
 
+    // convert currency for all products page:
     @GetMapping("/convertcurrencies")
-    public void sendProductsToConvertCurrencies() {
+    public String sendProductsToConvertCurrencies() {
         objectMapper = new ObjectMapper();
 
         CelestialBody celestialBody1 = new CelestialBody(UUID.randomUUID(), "Sun", 1, 3.50f, "sun", 0, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -132,7 +133,6 @@ public class EdgeApiController {
             throw new RuntimeException(e);
         }
 
-        String convertedCurrencies = receiver.receiveConvertedCurrencies();
-
+        return receiver.receiveConvertedCurrencies();
     }
 }
