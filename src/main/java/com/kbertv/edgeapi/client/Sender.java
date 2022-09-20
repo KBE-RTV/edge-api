@@ -6,10 +6,15 @@ import com.kbertv.edgeapi.config.RabbitMQConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
+
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class Sender {
@@ -23,24 +28,30 @@ public class Sender {
     @Value("${currencyservice.routing.call.key}")
     private String currencyserviceCallRoutingKey;
 
-    private static RabbitTemplate rabbitTemplate;
+    private static AsyncRabbitTemplate asyncRabbitTemplate;
     @Autowired
-    public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
-        Sender.rabbitTemplate = rabbitTemplate;
+    public void setAsnycRabbitTemplate(AsyncRabbitTemplate asyncRabbitTemplate) {
+        Sender.asyncRabbitTemplate = asyncRabbitTemplate;
     }
 
-    public void sendProductsToCurrencyService(String message)
-    {
-        System.out.println(currencyserviceCallRoutingKey);
-        rabbitTemplate.convertAndSend(topicExchangeName, currencyserviceCallRoutingKey, message);
+    public String sendProductsToCurrencyService(String message) throws ExecutionException, InterruptedException {
+        ListenableFuture<String> listenableFuture =
+                asyncRabbitTemplate.convertSendAndReceiveAsType(
+                        topicExchangeName,
+                        currencyserviceCallRoutingKey,
+                        message,
+                        new ParameterizedTypeReference<>() {
+                        });
 
-        System.out.println("SENT product to currency-service \n");
+        System.out.println("SENT and RECEIVED product to currency-service \n"+listenableFuture.get());
+        return listenableFuture.get();
     }
-
+/*
     public void sendRequestToProductService(String request)
     {
         rabbitTemplate.convertAndSend(topicExchangeName, productserviceCallRoutingKey, request);
 
         System.out.println("SENT request to product-service \n");
     }
+ */
 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class EdgeApiController {
@@ -131,11 +132,15 @@ public class EdgeApiController {
         CurrencyMessageDTO currencyMessageDTO = new CurrencyMessageDTO(UUID.randomUUID(), planetarySystems,"Euro", "Dollar");
 
         try {
-            sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
+            return sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
         } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        return receiver.receiveConvertedCurrencies();
+        //return receiver.receiveConvertedCurrencies();
     }
 }
