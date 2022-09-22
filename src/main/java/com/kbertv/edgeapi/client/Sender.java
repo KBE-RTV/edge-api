@@ -6,6 +6,7 @@ import com.kbertv.edgeapi.config.RabbitMQConfig;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.concurrent.ExecutionException;
 
 @Component
+@Slf4j
 public class Sender {
 
     @Value("${rabbitmq.exchange.name}")
@@ -34,6 +37,17 @@ public class Sender {
         Sender.asyncRabbitTemplate = asyncRabbitTemplate;
     }
 
+    public String sendProductsToCurrencyService(String requestMessage) throws ExecutionException, InterruptedException {
+        final String responseMessage;
+
+        AsyncRabbitTemplate.RabbitConverterFuture<String> future =
+                asyncRabbitTemplate.convertSendAndReceive(topicExchangeName, currencyserviceCallRoutingKey, requestMessage);
+        log.info("SENT: " + requestMessage);
+
+        return future.get();
+    }
+
+/*
     public String sendProductsToCurrencyService(String message) throws ExecutionException, InterruptedException {
         ListenableFuture<String> listenableFuture =
                 asyncRabbitTemplate.convertSendAndReceiveAsType(
@@ -46,6 +60,8 @@ public class Sender {
         System.out.println("SENT and RECEIVED product to currency-service \n"+listenableFuture.get());
         return listenableFuture.get();
     }
+
+ */
 /*
     public void sendRequestToProductService(String request)
     {

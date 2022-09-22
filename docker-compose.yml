@@ -8,6 +8,11 @@ services:
       dockerfile: .docker/Dockerfile
     ports:
       - 8086:8086
+    environment:
+      - spring_rabbitmq_host=rabbitmq
+      - spring_rabbitmq_port=5672
+      - spring_rabbitmq_username=guest
+      - spring_rabbitmq_password=guest
     depends_on:
       - keycloak
     networks:

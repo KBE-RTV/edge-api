@@ -5,16 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kbertv.edgeapi.client.Receiver;
 import com.kbertv.edgeapi.client.Sender;
 import com.kbertv.edgeapi.model.*;
+import com.kbertv.edgeapi.model.DTO.CurrencyMessageDTO;
+import com.kbertv.edgeapi.model.DTO.ProductServiceRequestDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,8 +68,7 @@ public class EdgeApiController {
     //TODO: Frontend: use "detailID" key to send the UUID
     @GetMapping("/detailcomponent")
     public void sendDetailComponentRequestToProductService(@RequestBody String detailID) {
-        List<UUID> componentUUIDList = Arrays.asList(UUID.fromString(detailID));
-        ProductServiceRequestDTO detailComponentRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), componentUUIDList, "component");
+        ProductServiceRequestDTO detailComponentRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), UUID.fromString(detailID), "component");
         rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, detailComponentRequestDTO);
     }
 
@@ -83,8 +81,7 @@ public class EdgeApiController {
     //TODO: Frontend: use "detailID" key to send the UUID
     @GetMapping("/detailproduct")
     public void sendDetailProductRequestToProductService(@RequestBody String detailID) {
-        List<UUID> productUUIDList = Arrays.asList(UUID.fromString(detailID));
-        ProductServiceRequestDTO detailProductRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), productUUIDList, "product");
+        ProductServiceRequestDTO detailProductRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), UUID.fromString(detailID), "product");
         rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, detailProductRequestDTO);
     }
 
@@ -133,11 +130,7 @@ public class EdgeApiController {
 
         try {
             return sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 

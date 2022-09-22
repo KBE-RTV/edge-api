@@ -7,6 +7,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,7 +81,10 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public AsyncRabbitTemplate asyncRabbitTemplate (RabbitTemplate rabbitTemplate){
-        return new AsyncRabbitTemplate(rabbitTemplate);
+    public AsyncRabbitTemplate asyncRabbitTemplate(RabbitTemplate rabbitTemplate) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(rabbitTemplate.getConnectionFactory());
+        container.setQueueNames(currencyserviceResponseQueue);
+        return new AsyncRabbitTemplate(rabbitTemplate, container);
     }
+
 }
