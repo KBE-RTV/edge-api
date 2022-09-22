@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +56,6 @@ public class EdgeApiController {
         return principal.getName();
     }
 */
-
     // requests to ps
     @GetMapping("/allcomponents")
     public void sendAllComponentsRequestToProductService() {

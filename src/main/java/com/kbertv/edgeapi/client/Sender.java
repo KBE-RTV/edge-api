@@ -64,7 +64,7 @@ public class Sender {
         final String responseMessage;
 
         AsyncRabbitTemplate.RabbitConverterFuture<String> future =
-                asyncRabbitTemplateForProductService.convertSendAndReceive(topicExchangeName, currencyserviceCallRoutingKey, requestMessage);
+                asyncRabbitTemplateForProductService.convertSendAndReceive(topicExchangeName, productserviceCallRoutingKey, requestMessage);
         log.info("SENT: " + requestMessage);
 
         return future.get();

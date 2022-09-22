@@ -2,7 +2,7 @@ version: "3.9"
 services:
   edgeapi:
     container_name: EdgeApiApp
-    command: java -jar target/edge-api-0.0.1-SNAPSHOT.jar
+    command: java -jar target/demo-0.0.1-SNAPSHOT.jar
     build:
       context: .
       dockerfile: .docker/Dockerfile
@@ -16,7 +16,7 @@ services:
     depends_on:
       - keycloak
     networks:
-      - warehouse_common_network
+      - warehouse_commonNetwork
   keycloak:
     container_name: keycloak_edgeapi
     image: quay.io/keycloak/keycloak:19.0.1
@@ -32,7 +32,7 @@ services:
     ports:
       - 8080:8080
     networks:
-      - warehouse_common_network
+      - warehouse_commonNetwork
 networks:
-  warehouse_common_network:
+  warehouse_commonNetwork:
     external: true
