@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -31,21 +32,44 @@ public class Sender {
     @Value("${currencyservice.routing.call.key}")
     private String currencyserviceCallRoutingKey;
 
-    private static AsyncRabbitTemplate asyncRabbitTemplate;
+    private static AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService;
+
+    private static AsyncRabbitTemplate asyncRabbitTemplateForProductService;
+
     @Autowired
-    public void setAsnycRabbitTemplate(AsyncRabbitTemplate asyncRabbitTemplate) {
-        Sender.asyncRabbitTemplate = asyncRabbitTemplate;
+    @Qualifier("asyncRabbitTemplateForCurrencyService")
+    public void setAsyncRabbitTemplateForCurrencyService(AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService) {
+        Sender.asyncRabbitTemplateForCurrencyService = asyncRabbitTemplateForCurrencyService;
     }
+
+
+    @Autowired
+    @Qualifier("asyncRabbitTemplateForProductService")
+    public void setAsyncRabbitTemplateForProductService(AsyncRabbitTemplate asyncRabbitTemplateForProductService) {
+        Sender.asyncRabbitTemplateForProductService = asyncRabbitTemplateForProductService;
+    }
+
 
     public String sendProductsToCurrencyService(String requestMessage) throws ExecutionException, InterruptedException {
         final String responseMessage;
 
         AsyncRabbitTemplate.RabbitConverterFuture<String> future =
-                asyncRabbitTemplate.convertSendAndReceive(topicExchangeName, currencyserviceCallRoutingKey, requestMessage);
+                asyncRabbitTemplateForCurrencyService.convertSendAndReceive(topicExchangeName, currencyserviceCallRoutingKey, requestMessage);
         log.info("SENT: " + requestMessage);
 
         return future.get();
     }
+
+    public String sendRequestToProductService(String requestMessage) throws ExecutionException, InterruptedException {
+        final String responseMessage;
+
+        AsyncRabbitTemplate.RabbitConverterFuture<String> future =
+                asyncRabbitTemplateForProductService.convertSendAndReceive(topicExchangeName, currencyserviceCallRoutingKey, requestMessage);
+        log.info("SENT: " + requestMessage);
+
+        return future.get();
+    }
+
 
 /*
     public String sendProductsToCurrencyService(String message) throws ExecutionException, InterruptedException {

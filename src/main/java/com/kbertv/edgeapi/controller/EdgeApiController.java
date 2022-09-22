@@ -10,7 +10,10 @@ import com.kbertv.edgeapi.model.DTO.ProductServiceRequestDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,21 +47,16 @@ public class EdgeApiController {
     public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
         EdgeApiController.rabbitTemplate = rabbitTemplate;
     }
-/*
-    @PostConstruct
-    public void init() {
-        sender = new Sender();
-        receiver = new Receiver();
-    }
 
- Just to test whether keycloak works
+/*
+// Just to test whether keycloak works
     @GetMapping("/")
     public String index(Principal principal) {
         return principal.getName();
     }
 */
 
-// requests to ps
+    // requests to ps
     @GetMapping("/allcomponents")
     public void sendAllComponentsRequestToProductService() {
         ProductServiceRequestDTO allComponentsRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), null, "component");
@@ -72,10 +70,17 @@ public class EdgeApiController {
         rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, detailComponentRequestDTO);
     }
 
-    @GetMapping("/allproducts")
-    public void sendAllProductsRequestToProductService() {
-        ProductServiceRequestDTO allProductsRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), null, "product");
-        rabbitTemplate.convertAndSend(exchange, productserviceCallRoutingKey, allProductsRequestDTO);
+    @GetMapping("/products")
+    public String sendProductsRequestToProductService(@RequestBody String detailID) {
+        ProductServiceRequestDTO productsRequestDTO = new ProductServiceRequestDTO(UUID.randomUUID(), UUID.fromString(detailID), "product");
+
+        objectMapper = new ObjectMapper();
+
+        try {
+            return sender.sendRequestToProductService(objectMapper.writeValueAsString(productsRequestDTO));
+        } catch (JsonProcessingException | ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //TODO: Frontend: use "detailID" key to send the UUID
@@ -126,7 +131,7 @@ public class EdgeApiController {
         planetarySystem1.setPrice(70.0f);
         planetarySystem2.setPrice(80.0f);
 
-        CurrencyMessageDTO currencyMessageDTO = new CurrencyMessageDTO(UUID.randomUUID(), planetarySystems,"Euro", "Dollar");
+        CurrencyMessageDTO currencyMessageDTO = new CurrencyMessageDTO(UUID.randomUUID(), planetarySystems, "Euro", "Dollar");
 
         try {
             return sender.sendProductsToCurrencyService(objectMapper.writeValueAsString(currencyMessageDTO));
@@ -134,6 +139,6 @@ public class EdgeApiController {
             throw new RuntimeException(e);
         }
 
-        //return receiver.receiveConvertedCurrencies();
     }
+
 }

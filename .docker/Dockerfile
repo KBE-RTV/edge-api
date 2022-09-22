@@ -6,7 +6,7 @@ COPY ../.mvn .mvn
 COPY ../pom.xml .
 COPY ../src src
 
-RUN ./mvnw install -DskipTests
+RUN ./mvnw install -DskipTests=true
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../edge-api-0.0.1-SNAPSHOT-spring-boot.jar; jar -xf ../edge-api-0.0.1-SNAPSHOT.jar)
 
 FROM openjdk:17-oracle

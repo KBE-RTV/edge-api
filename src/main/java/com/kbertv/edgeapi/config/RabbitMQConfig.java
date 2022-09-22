@@ -80,10 +80,17 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 
-    @Bean
-    public AsyncRabbitTemplate asyncRabbitTemplate(RabbitTemplate rabbitTemplate) {
+    @Bean(name="asyncRabbitTemplateForCurrencyService")
+    public AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService(RabbitTemplate rabbitTemplate) {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(rabbitTemplate.getConnectionFactory());
         container.setQueueNames(currencyserviceResponseQueue);
+        return new AsyncRabbitTemplate(rabbitTemplate, container);
+    }
+
+    @Bean(name="asyncRabbitTemplateForProductService")
+    public AsyncRabbitTemplate asyncRabbitTemplateForProductService(RabbitTemplate rabbitTemplate) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(rabbitTemplate.getConnectionFactory());
+        container.setQueueNames(productserviceResponseQueue);
         return new AsyncRabbitTemplate(rabbitTemplate, container);
     }
 
