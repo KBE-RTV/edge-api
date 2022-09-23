@@ -45,28 +45,6 @@ public class RabbitMQConfig {
         return new TopicExchange(topicExchangeName);
     }
 
-    // Response queue from currency service
-    @Bean
-    Queue currencyResponseQueue() {
-        return new Queue(currencyserviceResponseQueue, false);
-    }
-
-    @Bean
-    Binding currencyBinding() {
-        return BindingBuilder.bind(currencyResponseQueue()).to(exchange).with(currencyserviceResponseRoutingKey);
-    }
-
-    // Response queue from product service
-    @Bean
-    Queue productResponseQueue() {
-        return new Queue(productserviceResponseQueue, false);
-    }
-
-    @Bean
-    Binding productBinding() {
-        return BindingBuilder.bind(productResponseQueue()).to(exchange).with(productserviceResponseRoutingKey);
-    }
-
     @Bean
     public Jackson2JsonMessageConverter producerMessageConverter() {
         return new Jackson2JsonMessageConverter();
@@ -86,6 +64,8 @@ public class RabbitMQConfig {
         container.setQueueNames(currencyserviceResponseQueue);
         return new AsyncRabbitTemplate(rabbitTemplate, container);
     }
+
+
 
     @Bean(name="asyncRabbitTemplateForProductService")
     public AsyncRabbitTemplate asyncRabbitTemplateForProductService(RabbitTemplate rabbitTemplate) {

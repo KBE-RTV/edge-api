@@ -32,21 +32,22 @@ public class Sender {
     @Value("${currencyservice.routing.call.key}")
     private String currencyserviceCallRoutingKey;
 
-    private static AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService;
+    private AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService;
 
-    private static AsyncRabbitTemplate asyncRabbitTemplateForProductService;
+    private AsyncRabbitTemplate asyncRabbitTemplateForProductService;
+
 
     @Autowired
     @Qualifier("asyncRabbitTemplateForCurrencyService")
     public void setAsyncRabbitTemplateForCurrencyService(AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService) {
-        Sender.asyncRabbitTemplateForCurrencyService = asyncRabbitTemplateForCurrencyService;
+        this.asyncRabbitTemplateForCurrencyService = asyncRabbitTemplateForCurrencyService;
     }
 
 
     @Autowired
     @Qualifier("asyncRabbitTemplateForProductService")
     public void setAsyncRabbitTemplateForProductService(AsyncRabbitTemplate asyncRabbitTemplateForProductService) {
-        Sender.asyncRabbitTemplateForProductService = asyncRabbitTemplateForProductService;
+        this.asyncRabbitTemplateForProductService = asyncRabbitTemplateForProductService;
     }
 
 
@@ -64,34 +65,11 @@ public class Sender {
         final String responseMessage;
 
         AsyncRabbitTemplate.RabbitConverterFuture<String> future =
-                asyncRabbitTemplateForProductService.convertSendAndReceive(topicExchangeName, productserviceCallRoutingKey, requestMessage);
+                asyncRabbitTemplateForProductService.convertSendAndReceive(topicExchangeName, "productService.call", requestMessage);
         log.info("SENT: " + requestMessage);
 
         return future.get();
     }
 
 
-/*
-    public String sendProductsToCurrencyService(String message) throws ExecutionException, InterruptedException {
-        ListenableFuture<String> listenableFuture =
-                asyncRabbitTemplate.convertSendAndReceiveAsType(
-                        topicExchangeName,
-                        currencyserviceCallRoutingKey,
-                        message,
-                        new ParameterizedTypeReference<>() {
-                        });
-
-        System.out.println("SENT and RECEIVED product to currency-service \n"+listenableFuture.get());
-        return listenableFuture.get();
-    }
-
- */
-/*
-    public void sendRequestToProductService(String request)
-    {
-        rabbitTemplate.convertAndSend(topicExchangeName, productserviceCallRoutingKey, request);
-
-        System.out.println("SENT request to product-service \n");
-    }
- */
 }

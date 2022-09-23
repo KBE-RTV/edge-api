@@ -11,12 +11,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class CallCreateDTO {
+public class ProductServiceCreateDTO {
     private UUID requestID;
     private PlanetarySystem planetarySystem;
 
-    public CallCreateDTO(@JsonProperty("requestID") UUID requestID,
-                          @JsonProperty("detailID") PlanetarySystem planetarySystem){
+    public ProductServiceCreateDTO(@JsonProperty("requestID") UUID requestID,
+                                   @JsonProperty("detailID") PlanetarySystem planetarySystem){
         this.requestID = requestID;
         this.planetarySystem = planetarySystem;
     }
