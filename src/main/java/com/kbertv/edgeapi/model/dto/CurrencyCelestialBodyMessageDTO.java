@@ -1,4 +1,4 @@
-package com.kbertv.edgeapi.model.DTO;
+package com.kbertv.edgeapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kbertv.edgeapi.model.CelestialBody;

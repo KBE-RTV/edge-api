@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 @Component
 @Slf4j
-public class Sender {
+public class RabbitMQClient {
 
     @Value("${rabbitmq.exchange.name}")
     private String topicExchangeName;
@@ -36,20 +36,17 @@ public class Sender {
 
     private AsyncRabbitTemplate asyncRabbitTemplateForProductService;
 
-
     @Autowired
     @Qualifier("asyncRabbitTemplateForCurrencyService")
     public void setAsyncRabbitTemplateForCurrencyService(AsyncRabbitTemplate asyncRabbitTemplateForCurrencyService) {
         this.asyncRabbitTemplateForCurrencyService = asyncRabbitTemplateForCurrencyService;
     }
 
-
     @Autowired
     @Qualifier("asyncRabbitTemplateForProductService")
     public void setAsyncRabbitTemplateForProductService(AsyncRabbitTemplate asyncRabbitTemplateForProductService) {
         this.asyncRabbitTemplateForProductService = asyncRabbitTemplateForProductService;
     }
-
 
     public String sendProductsToCurrencyService(String requestMessage) throws ExecutionException, InterruptedException {
         final String responseMessage;

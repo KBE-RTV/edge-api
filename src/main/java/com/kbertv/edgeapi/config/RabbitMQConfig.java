@@ -21,13 +21,11 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.exchange.name}")
     private String topicExchangeName;
 
-    //Response queue from productservice
     @Value("${productservice.queue.response.name}")
     private String productserviceResponseQueue;
     @Value("${productservice.routing.response.key}")
     private String productserviceResponseRoutingKey;
 
-    //Response queue from currencyservice
     @Value("${currencyservice.queue.response.name}")
     private String currencyserviceResponseQueue;
     @Value("${currencyservice.routing.response.key}")
@@ -50,7 +48,6 @@ public class RabbitMQConfig {
         return new Jackson2JsonMessageConverter();
     }
 
-    //"final" made the app exit before -> maybe delete this?
     @Bean
     public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -64,8 +61,6 @@ public class RabbitMQConfig {
         container.setQueueNames(currencyserviceResponseQueue);
         return new AsyncRabbitTemplate(rabbitTemplate, container);
     }
-
-
 
     @Bean(name="asyncRabbitTemplateForProductService")
     public AsyncRabbitTemplate asyncRabbitTemplateForProductService(RabbitTemplate rabbitTemplate) {

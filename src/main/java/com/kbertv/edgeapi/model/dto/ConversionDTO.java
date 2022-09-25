@@ -1,4 +1,4 @@
-package com.kbertv.edgeapi.model.DTO;
+package com.kbertv.edgeapi.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kbertv.edgeapi.model.PlanetarySystem;
@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Getter
 @Setter
