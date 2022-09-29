@@ -40,6 +40,16 @@ public class EdgeApiController {
         EdgeApiController.rabbitTemplate = rabbitTemplate;
     }
 
+    @GetMapping(value = "/hello")
+    public String hello() {
+        return "hello";
+    }
+
+    @GetMapping(value = "/helloprotected")
+    public String helloprotected() {
+        return "helloprotected";
+    }
+
     @Operation(summary = "Get all celestial bodies", description = "Returns all celestial bodies with converted prices", tags = {"celestial bodies"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
