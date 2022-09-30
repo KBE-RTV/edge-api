@@ -1,23 +1,12 @@
 spring:
   application:
     name: edge-api
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak-provider:
-            issuer-uri: http://keycloak:8080/realms/KBE-Realm
-            # Individual properties can also be provided this way
-            #token-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/token
-            #authorization-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/auth
-            #user-info-uri: http://localhost:8080/realms/KBE-Realm/protocol/openid-connect/userinfo
-        registration:
-          edge-gateway-client:
-            provider: keycloak-provider
-            client-id: edge-gateway-client
-            authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8086/login/oauth2/code/edge-gateway-client
-            scope:
-              - openid
+keycloak:
+  realm: KBERTV
+  auth-server-url: http://keycloak:8080
+  resource: kbertv-backend
+  bearer-only: true
+  credentials:
+    secret: J56ggduDVYz2rtS6dsM05bpAdpxLCx7Y
 server:
   port: 8086
