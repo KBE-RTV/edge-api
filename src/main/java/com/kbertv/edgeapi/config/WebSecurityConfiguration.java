@@ -43,7 +43,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http
+        http.csrf().disable()
             .authorizeRequests()
             .anyRequest().authenticated();
     }
