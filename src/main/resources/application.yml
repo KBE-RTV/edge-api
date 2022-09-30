@@ -3,7 +3,7 @@ spring:
     name: edge-api
 keycloak:
   realm: KBERTV
-  auth-server-url: http://localhost:8080
+  auth-server-url: http://keycloak:8080
   resource: kbertv-backend
   bearer-only: true
   credentials:
